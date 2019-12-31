@@ -1,0 +1,115 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void SplitToRows(vector<string>&rows, string& maze, string flag)
+{
+	size_t start = 0;
+	size_t end = 0;
+	end = maze.find_first_of(flag, start);
+	string row;
+	while (end != string::npos)
+	{
+		row = maze.substr(start, end - start);
+		rows.push_back(row);
+		start = end + 1;
+		end = maze.find_first_of(flag, start);
+	}
+	row = maze.substr(start);
+	rows.push_back(row);
+	return;
+}
+
+
+bool CanGoDown(vector<string>&rows,int row,int column)
+{
+	if (row < rows.size() - 1 && rows.at(row + 1).at(column) != 'W' 
+		&& rows.at(row + 1).at(column) != '1')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CanGoRight(vector<string>&rows, int row, int column)
+{
+	if (column < rows.size() - 1 && rows.at(row).at(column+1) != 'W' 
+		&& rows.at(row).at(column + 1) != '1')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool CanGoUp(vector<string>&rows, int row, int column)
+{
+	if (row > 0 && rows.at(row - 1).at(column) != 'W' &&rows.at(row - 1).at(column) != '1')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CanGoLeft(vector<string>&rows, int row, int column)
+{
+	if (column > 0 && rows.at(row).at(column - 1) != 'W' && rows.at(row).at(column - 1) != '1')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool FindPath(vector<string>& rows,int row,int column)
+{
+	if (row == rows.size() - 1 && column == rows.size() - 1)
+	{
+		return true;
+	}
+	if (rows.at(row).at(column) != '.')
+	{
+		return false;
+	}
+	rows.at(row).at(column) = '1';
+	if (CanGoDown(rows, row, column) && FindPath(rows, row + 1, column))
+	{
+		return true;
+	}
+	if (CanGoRight(rows, row, column) && FindPath(rows, row, column + 1))
+	{
+		return true;
+	}
+	if (CanGoUp(rows, row, column) && FindPath(rows, row - 1, column))
+	{
+		return true;
+	}
+	if (CanGoLeft(rows, row, column) && FindPath(rows, row, column - 1))
+	{
+		return true;
+	}
+	rows.at(row).at(column) = 'W';
+	return false;
+}
+
+
+bool path_finder(string maze) {
+	vector<string>Rows;
+	SplitToRows(Rows, maze, "\n");
+	bool ExistPath = FindPath(Rows,0,0);
+	for (auto str : Rows)
+	{
+		cout << str << endl;
+	}
+	return ExistPath;
+}
